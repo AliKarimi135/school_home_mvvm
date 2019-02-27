@@ -2,6 +2,7 @@ package ir.aliprogramer.schoolhomemvvm.ViewModel;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
@@ -9,6 +10,9 @@ import android.widget.Toast;
 
 
 import ir.aliprogramer.schoolhomemvvm.BR;
+import ir.aliprogramer.schoolhomemvvm.View.Activity.LoginActivity;
+import ir.aliprogramer.schoolhomemvvm.View.Activity.RegisterActivity;
+
 public class LoginViewModel extends BaseObservable{
     @Bindable
     public String userName;
@@ -74,30 +78,8 @@ public class LoginViewModel extends BaseObservable{
         }
     }
     public void btnRegister(){
-        Log.d("reg","click register");
-    }
-    /* private MutableLiveData<String> userName=new MutableLiveData<>();
-    private MutableLiveData<String> userNameError=new MutableLiveData<>();
-    private MutableLiveData<String> password=new MutableLiveData<>();
-    private MutableLiveData<String> passwordError=new MutableLiveData<>();
-    private Context context;
-    private MutableLiveData<LoginModel>mutableLiveData;
 
-    public LoginViewModel(Context context) {
-        this.context = context;
+        //context.startActivity(new Intent(context,RegisterActivity.class));
     }
-    public MutableLiveData<LoginModel>getLogin(){
-        if(mutableLiveData==null)
-            mutableLiveData=new MutableLiveData<>();
-        return mutableLiveData;
-    }
-    public void btnLogin(){
-        if (userName.getValue().isEmpty())
-            userNameError.setValue("لطفا نام کاربری خود را وارد کنید.");
-        if(password.getValue().isEmpty())
-            passwordError.setValue("لطفا رمز عبور خود را وارد کنید.");
-    }
-    public void btnRegister(){
-        Log.d("reg","click register");
-    }*/
+
 }
