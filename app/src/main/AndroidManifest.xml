@@ -21,6 +21,8 @@
         </activity>
         <activity android:name=".View.Activity.RegisterActivity" />
         <activity android:name=".View.Activity.HomeActivity"
+                    android:configChanges="orientation"
+                    android:screenOrientation="portrait"
                     android:theme="@style/AppThemeHome"/>
     </application>
 

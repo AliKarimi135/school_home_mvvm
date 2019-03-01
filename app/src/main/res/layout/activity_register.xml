@@ -3,7 +3,7 @@
     <data>
         <variable
             name="register"
-            type="ir.aliprogramer.schoolhomemvvm.ViewModel.registerViewModel"/>
+            type="ir.aliprogramer.schoolhomemvvm.ViewModel.RegisterViewModel"/>
     </data>
     <ScrollView android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -16,7 +16,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class registerViewModel extends BaseObservable {
+public class RegisterViewModel extends BaseObservable {
     @Bindable
     public String userName;
     @Bindable
@@ -38,7 +38,7 @@ public class registerViewModel extends BaseObservable {
 
     int type=0;
 
-    public registerViewModel(Activity callingActivity) {
+    public RegisterViewModel(Activity callingActivity) {
         this.callingActivity = callingActivity;
         userNameError="";
         userName="";
