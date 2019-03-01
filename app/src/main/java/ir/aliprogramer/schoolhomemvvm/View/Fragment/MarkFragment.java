@@ -17,6 +17,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,8 +81,10 @@ public class MarkFragment extends Fragment {
             studentName=savedInstanceState.getString("studentName");
         }
         markViewModel= ViewModelProviders.of(this).get(MarkViewModel.class);
-
-        markViewModel.init(bookName,className,studentName,bookId,studentId);
+       // if(markViewModel.markLiveData.getValue()==null) {
+            markViewModel.init(bookName, className, studentName, bookId, studentId);
+            //Log.d("mark","init mark list");
+       //}
 
         if(appPreferenceTools.getType()==0){
             btnAddMark.setVisibility(View.INVISIBLE);

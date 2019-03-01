@@ -23,36 +23,37 @@ import retrofit2.Response;
 public class StudentViewModel extends ViewModel {
 
     private Activity callingActivity ;
+    //private Context context ;
 
     private APIInterface apiInterface;
 
 
     private APIClientProvider clientProvider;
 
-    private HomeViewModel homeViewModel;
+    //private HomeViewModel homeViewModel;
 
     public MutableLiveData<List<StudentResponse>> studentLiveData=new MutableLiveData<>();
 
-    public StudentViewModel() {
-    }
+   // public StudentViewModel() {
+        //context=HomeActivity.getContext();
+   // }
     public void init(int classId,int bookId,int groupId,String className,String bookName){
         this.callingActivity = HomeActivity.getActivity1();
 
         clientProvider = new APIClientProvider();
         apiInterface = clientProvider.getService();
 
-        homeViewModel = new HomeViewModel();
-
-        homeViewModel.setTitle(bookName+"\n"+" کلاس "+ className);
-
+        //homeViewModel = new HomeViewModel();
+        //homeViewModel.setTitle(bookName+"\n"+" کلاس "+ className);
+        ((HomeActivity)callingActivity).changeToolBarText(bookName+"\n"+" کلاس "+ className);
 
         Call<List<StudentResponse>> listCall = apiInterface.getStudents(classId, bookId, groupId);
-        homeViewModel.showProgressDialog();
+        ((HomeActivity)callingActivity).showProgressDialog();
         listCall.enqueue(new Callback<List<StudentResponse>>() {
             @Override
             public void onResponse(Call<List<StudentResponse>> call, Response<List<StudentResponse>> response) {
 
-               homeViewModel.hideProgressDialog();
+                ((HomeActivity)callingActivity).hideProgressDialog();
                 if ( response.code() == 401 || response.code() == 400) {
                     Toast.makeText(callingActivity, "لطفا مجدد وارد برنامه شوید.", Toast.LENGTH_LONG).show();
                     callingActivity.startActivity(new Intent(callingActivity,LoginActivity.class));
@@ -66,7 +67,7 @@ public class StudentViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<List<StudentResponse>> call, Throwable t) {
-               homeViewModel.hideProgressDialog();
+                ((HomeActivity)callingActivity).hideProgressDialog();
                 Toast.makeText(callingActivity, "اتصال اینترنت را بررسی کنید.", Toast.LENGTH_LONG).show();
                 return;
             }

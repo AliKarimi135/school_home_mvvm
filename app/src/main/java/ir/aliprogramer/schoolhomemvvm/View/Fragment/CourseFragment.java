@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,17 +61,19 @@ public class CourseFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         courseViewModel= ViewModelProviders.of(this).get(CoursetViewModel.class);
-        courseViewModel.init();
+        if(courseViewModel.courseLiveData.getValue()==null)
+            courseViewModel.init();
 
-        courseViewModel.courseLiveData.observe(this, new Observer<List<Course>>() {
-            @Override
-            public void onChanged(@Nullable List<Course> courses) {
-                if(courses!=null) {
-                    courseList.addAll(courses);
-                    courseAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+
+           courseViewModel.courseLiveData.observe(this, new Observer<List<Course>>() {
+               @Override
+               public void onChanged(@Nullable List<Course> courses) {
+                   if (courses != null) {
+                       courseList.addAll(courses);
+                       courseAdapter.notifyDataSetChanged();
+                   }
+               }
+           });
     }
     public void setData(FragmentManager manager){
         this.fragmentManager=manager;

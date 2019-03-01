@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import ir.aliprogramer.schoolhomemvvm.ViewModel.StudentViewModel;
 
 public class StudentFragment extends Fragment {
     int classId,groupId,bookId;
+
     String className,bookName;
     RecyclerView recyclerView;
     List<StudentResponse> studentList=new ArrayList<>();
@@ -60,9 +62,13 @@ public class StudentFragment extends Fragment {
             bookId=savedInstanceState.getInt("bookId");
             className=savedInstanceState.getString("className");
             bookName=savedInstanceState.getString("bookName");
+
         }
         studentViewModel= ViewModelProviders.of(this).get(StudentViewModel.class);
-        studentViewModel.init(classId,bookId,groupId,className,bookName);
+
+        studentViewModel.init(classId, bookId, groupId, className, bookName);
+
+
         studentViewModel.studentLiveData.observe(this, new Observer<List<StudentResponse>>() {
             @Override
             public void onChanged(@Nullable List<StudentResponse> studentResponses) {
@@ -82,6 +88,7 @@ public class StudentFragment extends Fragment {
         outState.putInt("bookId",bookId);
         outState.putString("className",className);
         outState.putString("bookName",bookName);
+
     }
 
     public void setData(int classId, int groupId, int bookId, FragmentManager manager,String className,String bookName){

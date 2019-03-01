@@ -3,7 +3,9 @@ package ir.aliprogramer.schoolhomemvvm.ViewModel;
 import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Collections;
@@ -21,23 +23,22 @@ import retrofit2.Response;
 public class MarkViewModel extends ViewModel {
 
     private Activity callingActivity ;
+    private Context context ;
 
     private APIInterface apiInterface;
     private APIClientProvider clientProvider;
 
-    private HomeViewModel homeViewModel;
 
     public MutableLiveData<List<Mark>> markLiveData=new MutableLiveData<>();
     public List<Mark>markList;
     public MarkViewModel() {
+       context=HomeActivity.getContext();
     }
     public void init(String bookName,String className,String studentName,int bookId,int studentId){
         this.callingActivity = HomeActivity.getActivity1();
 
         clientProvider = new APIClientProvider();
         apiInterface = clientProvider.getService();
-
-        homeViewModel = new HomeViewModel();
 
         String title="";
         title+=bookName;
@@ -53,15 +54,18 @@ public class MarkViewModel extends ViewModel {
             title="نمرات کتاب ";
             title+=bookName;
         }
-        homeViewModel.setTitle(title);
 
+        ((HomeActivity)callingActivity).changeToolBarText(title);
+        //homeViewModel.setTitle(title);
+        if(markLiveData.getValue()!=null)
+            return;
         Call<List<Mark>> listMark=apiInterface.getMarks(bookId,studentId);
-        homeViewModel.showProgressDialog();
+        ((HomeActivity)callingActivity).showProgressDialog();
         listMark.enqueue(new Callback<List<Mark>>() {
 
             @Override
             public void onResponse(Call<List<Mark>> call, Response<List<Mark>> response) {
-                homeViewModel.hideProgressDialog();
+                ((HomeActivity)callingActivity).hideProgressDialog();
                 if ( response.code() == 401 || response.code() == 400) {
                     Toast.makeText(callingActivity, "لطفا مجدد وارد برنامه شوید.", Toast.LENGTH_LONG).show();
                     callingActivity.startActivity(new Intent(callingActivity,LoginActivity.class));
@@ -77,7 +81,7 @@ public class MarkViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<List<Mark>> call, Throwable t) {
-                homeViewModel.hideProgressDialog();
+                ((HomeActivity)callingActivity).hideProgressDialog();
                 Toast.makeText(callingActivity, "اتصال اینترنت را بررسی کنید.", Toast.LENGTH_LONG).show();
                 return;
             }

@@ -40,7 +40,7 @@ public class CoursetViewModel extends ViewModel {
 
     private APIClientProvider clientProvider;
 
-    private HomeViewModel homeViewModel;
+    //private HomeViewModel homeViewModel;
 
     public MutableLiveData<List<Course>>courseLiveData=new MutableLiveData<>();
 
@@ -54,46 +54,46 @@ public class CoursetViewModel extends ViewModel {
         appPreferenceTools = new AppPreferenceTools(context);
         clientProvider = new APIClientProvider();
         apiInterface = clientProvider.getService();
-        homeViewModel = new HomeViewModel();
 
+        //homeViewModel = new HomeViewModel();
+        //homeViewModel.setTitle( "آقای " + appPreferenceTools.getUserName());
+        ((HomeActivity)callingActivity).changeToolBarText("آقای " + appPreferenceTools.getUserName());
+            type = appPreferenceTools.getType();
+            userId = appPreferenceTools.getUserId();
+            classId = appPreferenceTools.getClassId();
+            Call<List<Course>> listCall;
 
-        homeViewModel.setTitle( "آقای " + appPreferenceTools.getUserName());
+            if (type == 1) {
+                listCall = apiInterface.getCourse(userId, 1);
+            } else {
+                listCall = apiInterface.getCourse(classId, 0);
+            }
 
-        type=appPreferenceTools.getType();
-        userId=appPreferenceTools.getUserId();
-        classId=appPreferenceTools.getClassId();
-        Call<List<Course>> listCall;
+        ((HomeActivity)callingActivity).showProgressDialog();
+            listCall.enqueue(new Callback<List<Course>>() {
+                @Override
+                public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
+                    ((HomeActivity)callingActivity).hideProgressDialog();
 
-        if (type == 1) {
-            listCall = apiInterface.getCourse(userId, 1);
-        } else {
-            listCall = apiInterface.getCourse(classId, 0);
-        }
+                    if (response.code() == 401 || response.code() == 400) {
+                        Toast.makeText(context, "لطفا مجدد وارد برنامه شوید.", Toast.LENGTH_LONG).show();
+                        context.startActivity(new Intent(context, LoginActivity.class));
+                        callingActivity.finish();
+                        return;
+                    }
+                    if (response.isSuccessful()) {
+                        courseLiveData.setValue(response.body());
+                    }
+                }
 
-        homeViewModel.showProgressDialog();
-        listCall.enqueue(new Callback<List<Course>>() {
-            @Override
-            public void onResponse(Call<List<Course>> call, Response<List<Course>> response) {
-                homeViewModel.hideProgressDialog();
-
-                if ( response.code() == 401 || response.code() == 400) {
-                    Toast.makeText(context, "لطفا مجدد وارد برنامه شوید.", Toast.LENGTH_LONG).show();
-                    context.startActivity(new Intent(context,LoginActivity.class));
-                    callingActivity.finish();
+                @Override
+                public void onFailure(Call<List<Course>> call, Throwable t) {
+                    ((HomeActivity)callingActivity).hideProgressDialog();
+                    Toast.makeText(context, "اتصال اینترنت را بررسی کنید.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if (response.isSuccessful()) {
-                    courseLiveData.setValue(response.body());
-                }
-            }
+            });
 
-            @Override
-            public void onFailure(Call<List<Course>> call, Throwable t) {
-                homeViewModel.hideProgressDialog();
-                Toast.makeText(context, "اتصال اینترنت را بررسی کنید.", Toast.LENGTH_LONG).show();
-                return;
-            }
-        });
     }
 
     public void getStudentFragment(int classId,int groupId,int bookId, FragmentManager manager, String className, String bookName){

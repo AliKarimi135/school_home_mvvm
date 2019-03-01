@@ -5,8 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.Observable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.WindowManager;
 
 import ir.aliprogramer.schoolhomemvvm.AppPreferenceTools;
@@ -27,14 +30,11 @@ public class HomeViewModel extends BaseObservable {
 
     private FragmentManager fragmentManager;
 
-    ProgressDialog progressDialog ;
 
-    public HomeViewModel() {
+
+    public HomeViewModel( ) {
         context=HomeActivity.getContext();
-        if(progressDialog == null) {
-            progressDialog = new ProgressDialog(context.getApplicationContext());
-        }
-        //appPreferenceTools=new AppPreferenceTools(callingActivity.getApplicationContext());
+        this.callingActivity = HomeActivity.getActivity1();
     }
 
     public HomeViewModel(Activity callingActivity, FragmentManager fragmentManager) {
@@ -42,24 +42,27 @@ public class HomeViewModel extends BaseObservable {
         this.fragmentManager = fragmentManager;
         this.appPreferenceTools=new AppPreferenceTools(callingActivity);
         setTitle("آقای "+appPreferenceTools.getUserName());
-        if(progressDialog == null) {
-            progressDialog = new ProgressDialog(this.callingActivity);
-        }
+
         CourseFragment courseFragment=new CourseFragment();
         courseFragment.setData(fragmentManager);
-
         FragmentTransaction transaction=fragmentManager.beginTransaction();
         transaction.add(R.id.frame_layout,courseFragment,"courseFragment");
         transaction.commit();
     }
-
-    public void setTitle(String title) {
-        this.title = title;
+    @Bindable
+    public void setTitle(String title2) {
+        this.title = title2;
         notifyPropertyChanged(BR.title);
+        Log.d("title","change title"+title);
+    }
+    @Bindable
+    public String getTitle() {
+        return title;
     }
 
+
     /* Show progress dialog. */
-    public void showProgressDialog()
+    public void showProgressDialog(ProgressDialog progressDialog )
     {
         // Set progress dialog display message.
         progressDialog.setMessage("لطفا منتظر بمانید...");
@@ -67,16 +70,15 @@ public class HomeViewModel extends BaseObservable {
         // The progress dialog can not be cancelled.
         progressDialog.setCancelable(false);
 
-      //  progressDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
-        // Show it.
-       //progressDialog.show();
+
+       progressDialog.show();
     }
 
     /* Hide progress dialog. */
-    public void hideProgressDialog()
+    public void hideProgressDialog(ProgressDialog progressDialog )
     {
         // Close it.
-       // progressDialog.hide();
+       progressDialog.hide();
     }
     public void onBackPressed(){
         if(fragmentManager.getBackStackEntryCount()>0) {
