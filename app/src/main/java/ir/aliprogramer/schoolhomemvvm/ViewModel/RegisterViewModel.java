@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import ir.aliprogramer.schoolhomemvvm.BR;
@@ -177,5 +178,28 @@ public class RegisterViewModel extends BaseObservable {
     public void btnCancel(){
         callingActivity.finish();
         callingActivity.startActivity(new Intent(callingActivity, LoginActivity.class));
+    }
+
+    public void getData(Bundle savedInstanceState) {
+        setUserName(savedInstanceState.getString("username"));
+        setUserNameError(savedInstanceState.getString("usernameError"));
+        setPassword(savedInstanceState.getString("password"));
+        setPasswordError(savedInstanceState.getString("passwordError"));
+        setConfirmPassword(savedInstanceState.getString("confirmPassword"));
+        setConfirmPasswordError(savedInstanceState.getString("confirmPasswordError"));
+        setRadio_checked(savedInstanceState.getInt("type"));
+    }
+
+    public void setDataField() {
+    }
+
+    public void saveData(Bundle outState) {
+        outState.putString("username",getUserName());
+        outState.putString("usernameError",userNameError);
+        outState.putString("password",getPassword());
+        outState.putString("passwordError",passwordError);
+        outState.putString("confirmPassword",getConfirmPassword());
+        outState.putString("confirmPasswordError",confirmPasswordError);
+        outState.putInt("type",radio_checked);
     }
 }

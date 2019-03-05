@@ -61,9 +61,8 @@ public class CourseFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         courseViewModel= ViewModelProviders.of(this).get(CoursetViewModel.class);
-        if(courseViewModel.courseLiveData.getValue()==null)
+        //if(courseViewModel.courseLiveData.getValue()==null)
             courseViewModel.init();
-
 
            courseViewModel.courseLiveData.observe(this, new Observer<List<Course>>() {
                @Override

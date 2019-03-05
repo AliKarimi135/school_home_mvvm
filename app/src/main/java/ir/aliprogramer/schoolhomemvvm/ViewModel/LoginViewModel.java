@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -122,4 +123,24 @@ public class LoginViewModel extends BaseObservable{
         callingActivity.startActivity(new Intent(callingActivity,RegisterActivity.class));
     }
 
+    public void getData(Bundle savedInstanceState) {
+        setUserName(savedInstanceState.getString("username"));
+        setUserNameError(savedInstanceState.getString("usernameError"));
+        setPassword(savedInstanceState.getString("password"));
+        setPasswordError(savedInstanceState.getString("passwordError"));
+    }
+
+    public void setDataField() {
+        setUserName(getUserName());
+        setUserNameError(userNameError);
+        setPassword(getPassword());
+        setPasswordError(passwordError);
+    }
+
+    public void saveData(Bundle outState) {
+        outState.putString("username",getUserName());
+        outState.putString("usernameError",userNameError);
+        outState.putString("password",getPassword());
+        outState.putString("passwordError",passwordError);
+    }
 }
