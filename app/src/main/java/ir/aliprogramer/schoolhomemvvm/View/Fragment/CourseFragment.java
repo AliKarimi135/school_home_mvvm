@@ -2,6 +2,7 @@ package ir.aliprogramer.schoolhomemvvm.View.Fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,21 +30,20 @@ public class CourseFragment extends Fragment {
     FragmentManager fragmentManager;
     RecyclerView recyclerView;
     private CoursetViewModel courseViewModel;
-    List<Course>courseList=new ArrayList<>();
+    List<Course>courseList;
     CourseAdapter courseAdapter;
     AppPreferenceTools appPreferenceTools;
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("onCreateView", "onCreateView()");
         View view=inflater.inflate(R.layout.fragment_course,container,false);
         recyclerView=view.findViewById(R.id.course_recycle);
-        appPreferenceTools=new AppPreferenceTools(HomeActivity.getContext());
-        courseAdapter=new CourseAdapter(courseList,appPreferenceTools.getUserId(),appPreferenceTools.getType(),fragmentManager);
+        appPreferenceTools = new AppPreferenceTools(HomeActivity.getContext());
+        courseList=new ArrayList<>();
+        courseAdapter = new CourseAdapter(courseList, appPreferenceTools.getUserId(), appPreferenceTools.getType(), fragmentManager);
         recyclerView.setAdapter(courseAdapter);
         return view;
     }
@@ -61,7 +61,7 @@ public class CourseFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         courseViewModel= ViewModelProviders.of(this).get(CoursetViewModel.class);
-        //if(courseViewModel.courseLiveData.getValue()==null)
+        if(courseViewModel.statusCourseList()==1)
             courseViewModel.init();
 
            courseViewModel.courseLiveData.observe(this, new Observer<List<Course>>() {
@@ -77,4 +77,5 @@ public class CourseFragment extends Fragment {
     public void setData(FragmentManager manager){
         this.fragmentManager=manager;
     }
+
 }

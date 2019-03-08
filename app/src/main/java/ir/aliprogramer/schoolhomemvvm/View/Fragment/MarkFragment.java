@@ -42,7 +42,7 @@ public class MarkFragment extends Fragment {
     int studentId;
     int bookId;
     String className,bookName,studentName="";
-    List<Mark> markList=new ArrayList<>();
+    List<Mark> markList;
     RecyclerView recyclerView;
     FloatingActionButton btnAddMark;
     AppPreferenceTools appPreferenceTools;
@@ -55,6 +55,7 @@ public class MarkFragment extends Fragment {
         recyclerView=view.findViewById(R.id.mark_recycle);
         btnAddMark=view.findViewById(R.id.add_mark);
         appPreferenceTools=new AppPreferenceTools(getContext());
+        markList=new ArrayList<>();
         markAdapter=new MarkAdapter(markList,appPreferenceTools.getType(),studentId);
         recyclerView.setAdapter(markAdapter);
         return view;
@@ -81,10 +82,8 @@ public class MarkFragment extends Fragment {
             studentName=savedInstanceState.getString("studentName");
         }
         markViewModel= ViewModelProviders.of(this).get(MarkViewModel.class);
-       // if(markViewModel.markLiveData.getValue()==null) {
+        if(markViewModel.statusMarkList()==1)
             markViewModel.init(bookName, className, studentName, bookId, studentId);
-            //Log.d("mark","init mark list");
-       //}
 
         if(appPreferenceTools.getType()==0){
             btnAddMark.setVisibility(View.INVISIBLE);
@@ -104,10 +103,35 @@ public class MarkFragment extends Fragment {
                 markList.addAll(marks);
                 markAdapter.notifyDataSetChanged();
             }
+
         });
 
     }
+    /*public void addMark( Mark m) {
+        markViewModel=new MarkViewModel();
+        if(markViewModel==null)
+            Log.d("testNull","markViewModel is null");
+       // markViewModel.markLiveData.getValue().add(0,m);
+        //markViewModel.addMark(m);
 
+        //markList=markAdapter.getAdapterData();
+        /*markList.add(0,m);
+        Log.d("markSize1 ",markList.size()+"");
+        //markAdapter.notifyDataSetChanged();*/
+      /*markViewModel.markLiveData.observe(this, new Observer<List<Mark>>() {
+            @Override
+            public void onChanged(@Nullable List<Mark> marks) {
+                markList.addAll(marks);
+                markAdapter.notifyDataSetChanged();
+                Log.d("markSize",markList.size()+"");
+                //markList.add(0,m);
+               // markList.addAll(marks);
+               // Log.d("markSize",markList.size()+" "+marks.isEmpty());
+               // markAdapter.updateAdapterData(markList);
+           }
+       });
+
+    }*/
 
 
     @Override

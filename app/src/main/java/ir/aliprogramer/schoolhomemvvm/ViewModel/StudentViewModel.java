@@ -30,22 +30,36 @@ public class StudentViewModel extends ViewModel {
 
     private APIClientProvider clientProvider;
 
-    //private HomeViewModel homeViewModel;
+    public String title="";
 
-    public MutableLiveData<List<StudentResponse>> studentLiveData=new MutableLiveData<>();
+    public MutableLiveData<List<StudentResponse>> studentLiveData;
 
-   // public StudentViewModel() {
-        //context=HomeActivity.getContext();
-   // }
-    public void init(int classId,int bookId,int groupId,String className,String bookName){
+    public int statusStudentList() {
+        if(studentLiveData==null)
+            return 1;
+        ((HomeActivity)callingActivity).changeToolBarText(getTitle());
+        return 2;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void init(int classId, int bookId, int groupId, String className, String bookName){
         this.callingActivity = HomeActivity.getActivity1();
 
         clientProvider = new APIClientProvider();
         apiInterface = clientProvider.getService();
-
+        if(studentLiveData==null)
+            studentLiveData=new MutableLiveData<>();
         //homeViewModel = new HomeViewModel();
         //homeViewModel.setTitle(bookName+"\n"+" کلاس "+ className);
-        ((HomeActivity)callingActivity).changeToolBarText(bookName+"\n"+" کلاس "+ className);
+        setTitle(bookName+"\n"+" کلاس "+ className);
+        ((HomeActivity)callingActivity).changeToolBarText(getTitle());
 
         Call<List<StudentResponse>> listCall = apiInterface.getStudents(classId, bookId, groupId);
         ((HomeActivity)callingActivity).showProgressDialog();

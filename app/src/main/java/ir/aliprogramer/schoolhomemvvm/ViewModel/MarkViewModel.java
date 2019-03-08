@@ -2,12 +2,15 @@ package ir.aliprogramer.schoolhomemvvm.ViewModel;
 
 import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,23 +27,38 @@ public class MarkViewModel extends ViewModel {
 
     private Activity callingActivity ;
     private Context context ;
-
+    public String title="";
     private APIInterface apiInterface;
     private APIClientProvider clientProvider;
 
 
-    public MutableLiveData<List<Mark>> markLiveData=new MutableLiveData<>();
+    public MutableLiveData<List<Mark>> markLiveData;
     public List<Mark>markList;
     public MarkViewModel() {
        context=HomeActivity.getContext();
     }
-    public void init(String bookName,String className,String studentName,int bookId,int studentId){
+    public int statusMarkList(){
+        if(markLiveData==null)
+            return 1;
+        ((HomeActivity)callingActivity).changeToolBarText(getTitle());
+        return  2;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void init(String bookName, String className, String studentName, int bookId, int studentId){
         this.callingActivity = HomeActivity.getActivity1();
 
         clientProvider = new APIClientProvider();
         apiInterface = clientProvider.getService();
-
-        String title="";
+        if(markLiveData==null)
+            markLiveData=new MutableLiveData<>();
         title+=bookName;
         if(!className.equals(" ")) {
             title += " کلاس ";
@@ -54,11 +72,10 @@ public class MarkViewModel extends ViewModel {
             title="نمرات کتاب ";
             title+=bookName;
         }
-
+        setTitle(title);
         ((HomeActivity)callingActivity).changeToolBarText(title);
-        //homeViewModel.setTitle(title);
-        if(markLiveData.getValue()!=null)
-            return;
+
+
         Call<List<Mark>> listMark=apiInterface.getMarks(bookId,studentId);
         ((HomeActivity)callingActivity).showProgressDialog();
         listMark.enqueue(new Callback<List<Mark>>() {
@@ -86,6 +103,13 @@ public class MarkViewModel extends ViewModel {
                 return;
             }
         });
+    }
+
+
+    public void addMark(Mark m) {
+        if(markLiveData==null)
+            markLiveData=new MutableLiveData<>();
+        markLiveData.getValue().add(0,m);
     }
 }
 

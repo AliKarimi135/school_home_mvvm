@@ -30,7 +30,7 @@ public class StudentFragment extends Fragment {
 
     String className,bookName;
     RecyclerView recyclerView;
-    List<StudentResponse> studentList=new ArrayList<>();
+    List<StudentResponse> studentList;
     FragmentManager manager;
     StudentAdapter studentAdapter;
     StudentViewModel studentViewModel;
@@ -39,6 +39,7 @@ public class StudentFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_student,container,false);
         recyclerView=view.findViewById(R.id.student_recycle);
+        studentList=new ArrayList<>();
         studentAdapter=new StudentAdapter(studentList, bookId, manager, className, bookName);
         recyclerView.setAdapter(studentAdapter);
         return view;
@@ -65,8 +66,8 @@ public class StudentFragment extends Fragment {
 
         }
         studentViewModel= ViewModelProviders.of(this).get(StudentViewModel.class);
-
-        studentViewModel.init(classId, bookId, groupId, className, bookName);
+        if(studentViewModel.statusStudentList()==1)
+            studentViewModel.init(classId, bookId, groupId, className, bookName);
 
 
         studentViewModel.studentLiveData.observe(this, new Observer<List<StudentResponse>>() {

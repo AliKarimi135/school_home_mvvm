@@ -42,19 +42,26 @@ public class CoursetViewModel extends ViewModel {
 
     //private HomeViewModel homeViewModel;
 
-    public MutableLiveData<List<Course>>courseLiveData=new MutableLiveData<>();
+    public MutableLiveData<List<Course>>courseLiveData;
 
    public CoursetViewModel() {
        context=HomeActivity.getContext();
     }
-
+    public int statusCourseList(){
+       if(courseLiveData==null) {
+           return 1;
+       }
+        ((HomeActivity)callingActivity).changeToolBarText("آقای " + appPreferenceTools.getUserName());
+       return 2;
+    }
     public void init() {
         this.callingActivity = HomeActivity.getActivity1();
         context=HomeActivity.getContext();
         appPreferenceTools = new AppPreferenceTools(context);
         clientProvider = new APIClientProvider();
         apiInterface = clientProvider.getService();
-
+        if(courseLiveData==null)
+            courseLiveData = new MutableLiveData<>();
         //homeViewModel = new HomeViewModel();
         //homeViewModel.setTitle( "آقای " + appPreferenceTools.getUserName());
         ((HomeActivity)callingActivity).changeToolBarText("آقای " + appPreferenceTools.getUserName());
@@ -82,6 +89,7 @@ public class CoursetViewModel extends ViewModel {
                         return;
                     }
                     if (response.isSuccessful()) {
+
                         courseLiveData.setValue(response.body());
                     }
                 }

@@ -53,7 +53,6 @@ public class HomeViewModel extends BaseObservable {
     public void setTitle(String title2) {
         this.title = title2;
         notifyPropertyChanged(BR.title);
-        Log.d("title","change title"+title);
     }
     @Bindable
     public String getTitle() {

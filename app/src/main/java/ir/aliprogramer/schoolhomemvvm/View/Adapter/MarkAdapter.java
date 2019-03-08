@@ -28,6 +28,9 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.ViewHolder> {
         this.markList = data;
         this.notifyDataSetChanged();
     }
+    public List<Mark> getAdapterData() {
+        return markList;
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

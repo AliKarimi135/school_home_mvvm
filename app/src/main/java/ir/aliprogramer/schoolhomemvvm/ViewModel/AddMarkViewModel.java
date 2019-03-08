@@ -14,6 +14,7 @@ import ir.aliprogramer.schoolhomemvvm.Model.MarkModel.Mark;
 import ir.aliprogramer.schoolhomemvvm.Model.MarkModel.MarkResponse;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.HomeActivity;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.LoginActivity;
+import ir.aliprogramer.schoolhomemvvm.View.Fragment.MarkFragment;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIClientProvider;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIInterface;
 import retrofit2.Call;
@@ -59,10 +60,6 @@ public class AddMarkViewModel extends BaseObservable {
         apiInterface = clientProvider.getService();
     }
 
-    public AddMarkViewModel() {
-        if(markViewModel==null)
-            markViewModel = new MarkViewModel();
-    }
 
     public String getMark() {
         return mark;
@@ -148,7 +145,9 @@ public class AddMarkViewModel extends BaseObservable {
                     m.setDescription(descriptionSt);
                     m.setMonth(response.body().getMonth());
                     m.setDay(response.body().getDay());
-                    markViewModel.markLiveData.getValue().add(0,m);
+                    markViewModel=new MarkViewModel();
+                    markViewModel.addMark(m);
+
                     //markViewModel.markList.add(0,m);
                    // notifyChange();
                     Toast.makeText(getContext(), "نمره با موفقیت ثبت شد", Toast.LENGTH_LONG).show();
