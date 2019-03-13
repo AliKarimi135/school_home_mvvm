@@ -2,11 +2,16 @@ package ir.aliprogramer.schoolhomemvvm.ViewModel;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.util.Log;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ir.aliprogramer.schoolhomemvvm.AppPreferenceTools;
 import ir.aliprogramer.schoolhomemvvm.BR;
@@ -14,6 +19,7 @@ import ir.aliprogramer.schoolhomemvvm.Model.MarkModel.Mark;
 import ir.aliprogramer.schoolhomemvvm.Model.MarkModel.MarkResponse;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.HomeActivity;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.LoginActivity;
+import ir.aliprogramer.schoolhomemvvm.View.Adapter.MarkAdapter;
 import ir.aliprogramer.schoolhomemvvm.View.Fragment.MarkFragment;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIClientProvider;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIInterface;
@@ -45,7 +51,10 @@ public class AddMarkViewModel extends BaseObservable {
 
     int bookId,studentId;
     Dialog dialog;
-    public AddMarkViewModel(Dialog dialog, int bookId, int studentId) {
+    List<Mark> markList;
+    MutableLiveData<List<Mark>> markLiveData;
+    MarkAdapter markAdapter;
+    public AddMarkViewModel(Dialog dialog, int bookId, int studentId, List<Mark> markList, MutableLiveData<List<Mark>> markLiveData, MarkAdapter markAdapter) {
         mark = "";
         description = "";
         markError = "";
@@ -53,6 +62,9 @@ public class AddMarkViewModel extends BaseObservable {
         this.bookId=bookId;
         this.studentId=studentId;
         this.dialog=dialog;
+        this.markList=markList;
+        this.markAdapter=markAdapter;
+        this.markLiveData=markLiveData;
         this.callingActivity = HomeActivity.getActivity1();
         context = getContext();
         markViewModel = new MarkViewModel();
@@ -145,11 +157,11 @@ public class AddMarkViewModel extends BaseObservable {
                     m.setDescription(descriptionSt);
                     m.setMonth(response.body().getMonth());
                     m.setDay(response.body().getDay());
-                    markViewModel=new MarkViewModel();
-                    markViewModel.addMark(m);
 
-                    //markViewModel.markList.add(0,m);
-                   // notifyChange();
+                    markList.add(0,m);
+                    markLiveData.getValue().add(0,m);
+                    markAdapter.notifyDataSetChanged();
+
                     Toast.makeText(getContext(), "نمره با موفقیت ثبت شد", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), "نمره ثبت نشد", Toast.LENGTH_LONG).show();

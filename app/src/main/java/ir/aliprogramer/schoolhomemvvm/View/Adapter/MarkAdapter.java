@@ -1,5 +1,6 @@
 package ir.aliprogramer.schoolhomemvvm.View.Adapter;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,18 +20,19 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.ViewHolder> {
     List<Mark> markList;
    int type,studentId;
     String StMonth[]={" ","فروردین","اردیبیهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"};
-    public MarkAdapter(List<Mark> markList,int type,int studentId) {
+    MutableLiveData<List<Mark>> markLiveData;
+
+
+    public MarkAdapter(List<Mark> markList, int type, int studentId,MutableLiveData<List<Mark>> markLiveData) {
         this.markList = markList;
         this.type=type;
         this.studentId=studentId;
+        this.markLiveData=markLiveData;
     }
-    public void updateAdapterData(List<Mark> data) {
-        this.markList = data;
-        this.notifyDataSetChanged();
+    public MarkAdapter getMarkAdapter() {
+       return this;
     }
-    public List<Mark> getAdapterData() {
-        return markList;
-    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -66,10 +68,12 @@ public class MarkAdapter extends RecyclerView.Adapter<MarkAdapter.ViewHolder> {
 
         @Override
         public void onClick(View view) {
-            EditAndDeleteMarkDialog markDialog=new EditAndDeleteMarkDialog(view.getContext(),studentId,markList.get(getAdapterPosition()).getId(),markList.get(getAdapterPosition()).getMark(),markList.get(getAdapterPosition()).getDescription(),getAdapterPosition());
+            //EditAndDeleteMarkDialog markDialog=new EditAndDeleteMarkDialog(view.getContext(),studentId,markList.get(getAdapterPosition()).getId(),markList.get(getAdapterPosition()).getMark(),markList.get(getAdapterPosition()).getDescription(),getAdapterPosition());
+            EditAndDeleteMarkDialog markDialog=new EditAndDeleteMarkDialog(view.getContext(),studentId,getAdapterPosition(),markList,markLiveData,getMarkAdapter());
             markDialog.show();
             Window window = markDialog.getWindow();
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            notifyDataSetChanged();
         }
 
     }

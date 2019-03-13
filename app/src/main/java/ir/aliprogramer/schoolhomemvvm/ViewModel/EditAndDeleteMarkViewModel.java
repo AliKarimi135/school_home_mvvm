@@ -2,16 +2,21 @@ package ir.aliprogramer.schoolhomemvvm.ViewModel;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.widget.Toast;
 
+import java.util.List;
+
 import ir.aliprogramer.schoolhomemvvm.BR;
 import ir.aliprogramer.schoolhomemvvm.Model.MarkModel.Mark;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.HomeActivity;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.LoginActivity;
+import ir.aliprogramer.schoolhomemvvm.View.Adapter.MarkAdapter;
+import ir.aliprogramer.schoolhomemvvm.View.Dialog.EditAndDeleteMarkDialog;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIClientProvider;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIInterface;
 import okhttp3.ResponseBody;
@@ -37,14 +42,16 @@ public class EditAndDeleteMarkViewModel extends BaseObservable {
 
     private APIInterface apiInterface;
 
-    private MarkViewModel markViewModel;
 
     private APIClientProvider clientProvider;
 
-    int bookId,studentId,Itemposition;
+    int markId,studentId,Itemposition;
     String oldMark,oldDescription;
     Dialog dialog;
-    public EditAndDeleteMarkViewModel(Dialog dialog, int bookId, int studentId, int mark, String description,int Itemposition) {
+    MutableLiveData<List<Mark>> markLiveData;
+    List<Mark> markList;
+    MarkAdapter markAdapter;
+    /*public EditAndDeleteMarkViewModel(Dialog dialog, int bookId, int studentId, int mark, String description,int Itemposition) {
         this.mark =mark+"";
         this.description = description;
         oldMark=mark+"";
@@ -60,6 +67,30 @@ public class EditAndDeleteMarkViewModel extends BaseObservable {
         markViewModel = new MarkViewModel();
         clientProvider = new APIClientProvider();
         apiInterface = clientProvider.getService();
+    }*/
+
+    public EditAndDeleteMarkViewModel(EditAndDeleteMarkDialog editAndDeleteMarkDialog, int studentId, int itemposition, List<Mark> markList, MutableLiveData<List<Mark>> markLiveData, MarkAdapter markAdapter) {
+        this.markId = markList.get(itemposition).getId();
+        this.mark = markList.get(itemposition).getMark()+"";
+        this.description = markList.get(itemposition).getDescription();
+
+        oldMark=mark+"";
+        oldDescription=description;
+        markError = "";
+        descriptionError = "";
+
+        this.studentId=studentId;
+        this.dialog=editAndDeleteMarkDialog;
+        this.Itemposition=itemposition;
+        this.callingActivity = HomeActivity.getActivity1();
+        context = getContext();
+
+        clientProvider = new APIClientProvider();
+        apiInterface = clientProvider.getService();
+
+        this.markList=markList;
+        this.markLiveData=markLiveData;
+        this.markAdapter=markAdapter;
     }
 
     public String getMark() {
@@ -117,14 +148,14 @@ public class EditAndDeleteMarkViewModel extends BaseObservable {
     }
     public void update() {
         if (checkInput()) {
-            updateMark(bookId, Integer.parseInt(getMark()), getDescription(), Itemposition);
+            updateMark(markId, Integer.parseInt(getMark()), getDescription(), Itemposition);
             dialog.dismiss();
         }else {
             return;
         }
     }
     public void delete() {
-        deleteMark(bookId,Itemposition);
+        deleteMark(markId,Itemposition);
         dialog.dismiss();
         return;
     }
@@ -145,13 +176,19 @@ public class EditAndDeleteMarkViewModel extends BaseObservable {
                     return;
                 }
                 if (response.isSuccessful()) {
-
-                    Mark m = markViewModel.markLiveData.getValue().get(Itemposition);
+                    //for init day and month mark
+                    Mark m = markList.get(Itemposition);
                     m.setMark(mark);
                     m.setDescription(descriptionSt);
-                    markViewModel.markLiveData.getValue().remove(Itemposition);
-                    markViewModel.markLiveData.getValue().add(Itemposition, m);
-                    //updateAdapterData(markList);
+
+                    markLiveData.getValue().remove(Itemposition);
+                    markLiveData.getValue().add(Itemposition, m);
+
+                    markList.remove(Itemposition);
+                    markList.add(Itemposition,m);
+
+                    markAdapter.notifyDataSetChanged();
+
                     Toast.makeText(context, "ویرایش نمره با موفقیت انجام شد.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(context, "ویرایش نمره انجام نشد.", Toast.LENGTH_LONG).show();
@@ -179,8 +216,9 @@ public class EditAndDeleteMarkViewModel extends BaseObservable {
                     return;
                 }
                 if (response.isSuccessful()) {
-                    markViewModel.markLiveData.getValue().remove(Itemposition);
-                    //updateAdapterData(markList);
+                   markLiveData.getValue().remove(Itemposition);
+                   markList.remove(Itemposition);
+                   markAdapter.notifyDataSetChanged();
                     Toast.makeText(context, "نمره با موفقیت حذف شد", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(context, "نمره حذف نشد", Toast.LENGTH_LONG).show();

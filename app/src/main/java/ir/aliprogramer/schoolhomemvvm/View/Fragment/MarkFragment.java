@@ -2,6 +2,7 @@ package ir.aliprogramer.schoolhomemvvm.View.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -31,6 +32,7 @@ import java.util.List;
 import ir.aliprogramer.schoolhomemvvm.AppPreferenceTools;
 import ir.aliprogramer.schoolhomemvvm.Model.MarkModel.Mark;
 import ir.aliprogramer.schoolhomemvvm.R;
+import ir.aliprogramer.schoolhomemvvm.View.Activity.HomeActivity;
 import ir.aliprogramer.schoolhomemvvm.View.Adapter.MarkAdapter;
 import ir.aliprogramer.schoolhomemvvm.View.Dialog.AddMarkDialog;
 import ir.aliprogramer.schoolhomemvvm.ViewModel.MarkViewModel;
@@ -55,9 +57,6 @@ public class MarkFragment extends Fragment {
         recyclerView=view.findViewById(R.id.mark_recycle);
         btnAddMark=view.findViewById(R.id.add_mark);
         appPreferenceTools=new AppPreferenceTools(getContext());
-        markList=new ArrayList<>();
-        markAdapter=new MarkAdapter(markList,appPreferenceTools.getType(),studentId);
-        recyclerView.setAdapter(markAdapter);
         return view;
     }
 
@@ -74,6 +73,7 @@ public class MarkFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         if(savedInstanceState!=null){
             studentId=savedInstanceState.getInt("studentId");
             bookId=savedInstanceState.getInt("bookId");
@@ -81,9 +81,16 @@ public class MarkFragment extends Fragment {
             bookName=savedInstanceState.getString("bookName");
             studentName=savedInstanceState.getString("studentName");
         }
+
         markViewModel= ViewModelProviders.of(this).get(MarkViewModel.class);
-        if(markViewModel.statusMarkList()==1)
+        if(markViewModel.statusMarkList()==1) {
             markViewModel.init(bookName, className, studentName, bookId, studentId);
+            markList=new ArrayList<>();
+            markAdapter=new MarkAdapter(markList,appPreferenceTools.getType(),studentId,markViewModel.getMarkLiveData());
+            recyclerView.setAdapter(markAdapter);
+        }
+
+
 
         if(appPreferenceTools.getType()==0){
             btnAddMark.setVisibility(View.INVISIBLE);
@@ -91,47 +98,28 @@ public class MarkFragment extends Fragment {
         btnAddMark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddMarkDialog markDialog = new AddMarkDialog(getActivity(),bookId,studentId);
+                AddMarkDialog markDialog = new AddMarkDialog(getActivity(),bookId,studentId,markList,markViewModel.getMarkLiveData(),markAdapter);
                 markDialog.show();
                 Window window = markDialog.getWindow();
                 window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
             }
         });
-        markViewModel.markLiveData.observe(this, new Observer<List<Mark>>() {
+       /* markViewModel.markLiveData.observe(this, new Observer<List<Mark>>() {
             @Override
             public void onChanged(@Nullable List<Mark> marks) {
                 markList.addAll(marks);
                 markAdapter.notifyDataSetChanged();
             }
-
-        });
-
+        });*/
+markViewModel.getMarkLiveData().observe(this, new Observer<List<Mark>>() {
+    @Override
+    public void onChanged(@Nullable List<Mark> marks) {
+        markList.addAll(marks);
+        markAdapter.notifyDataSetChanged();
     }
-    /*public void addMark( Mark m) {
-        markViewModel=new MarkViewModel();
-        if(markViewModel==null)
-            Log.d("testNull","markViewModel is null");
-       // markViewModel.markLiveData.getValue().add(0,m);
-        //markViewModel.addMark(m);
-
-        //markList=markAdapter.getAdapterData();
-        /*markList.add(0,m);
-        Log.d("markSize1 ",markList.size()+"");
-        //markAdapter.notifyDataSetChanged();*/
-      /*markViewModel.markLiveData.observe(this, new Observer<List<Mark>>() {
-            @Override
-            public void onChanged(@Nullable List<Mark> marks) {
-                markList.addAll(marks);
-                markAdapter.notifyDataSetChanged();
-                Log.d("markSize",markList.size()+"");
-                //markList.add(0,m);
-               // markList.addAll(marks);
-               // Log.d("markSize",markList.size()+" "+marks.isEmpty());
-               // markAdapter.updateAdapterData(markList);
-           }
-       });
-
-    }*/
+});
+    }
 
 
     @Override
@@ -151,4 +139,6 @@ public class MarkFragment extends Fragment {
         this.bookName=bookName;
         this.studentName=studentName;
     }
+
+
 }

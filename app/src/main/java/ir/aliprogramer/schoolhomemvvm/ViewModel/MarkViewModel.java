@@ -2,11 +2,9 @@ package ir.aliprogramer.schoolhomemvvm.ViewModel;
 
 import android.app.Activity;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +15,7 @@ import java.util.List;
 import ir.aliprogramer.schoolhomemvvm.Model.MarkModel.Mark;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.HomeActivity;
 import ir.aliprogramer.schoolhomemvvm.View.Activity.LoginActivity;
+import ir.aliprogramer.schoolhomemvvm.View.Fragment.MarkFragment;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIClientProvider;
 import ir.aliprogramer.schoolhomemvvm.WebService.APIInterface;
 import retrofit2.Call;
@@ -33,6 +32,8 @@ public class MarkViewModel extends ViewModel {
 
 
     public MutableLiveData<List<Mark>> markLiveData;
+
+
     public List<Mark>markList;
     public MarkViewModel() {
        context=HomeActivity.getContext();
@@ -59,6 +60,8 @@ public class MarkViewModel extends ViewModel {
         apiInterface = clientProvider.getService();
         if(markLiveData==null)
             markLiveData=new MutableLiveData<>();
+        if(markList==null)
+          markList=new ArrayList<>();
         title+=bookName;
         if(!className.equals(" ")) {
             title += " کلاس ";
@@ -104,12 +107,13 @@ public class MarkViewModel extends ViewModel {
             }
         });
     }
+public MutableLiveData<List<Mark>> getMarkLiveData(){
+    if(markLiveData==null)
+        markLiveData = new MutableLiveData<>();
+
+    return  markLiveData;
+}
 
 
-    public void addMark(Mark m) {
-        if(markLiveData==null)
-            markLiveData=new MutableLiveData<>();
-        markLiveData.getValue().add(0,m);
-    }
 }
 
