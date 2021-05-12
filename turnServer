@@ -1,0 +1,9 @@
+ubounto 18
+sudo apt-get -y update
+sudo apt-get install coturn
+vim  /etc/default/coturn
+enabel turn
+systemctl start coturn
+ mv /etc/turnserver.conf /etc/turnserver.conf.backup
+ vim /etc/turnserver.conf
+sudo service coturn restart
