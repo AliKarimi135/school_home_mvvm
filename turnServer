@@ -48,3 +48,23 @@ named-checkzone example.com db.example.com
 };
 ********************
 systemctl restart bind9
+*********ssl******
+ufw allow 443
+
+add-apt-repository ppa:certbot/certbot
+
+apt update
+apt install python-certbot-nginx
+vim /etc/nginx/conf.d/azarlearn.com
+server_name azarlearn.com www.azarlearn.com;
+
+ufw allow 'Nginx Full'
+ufw delete allow 'Nginx HTTP'
+ufw status
+certbot --nginx -d azarlearn.com -d www.azarlearn.com
+email valid and agree
+2
+certbot renew --dry-run
+
+
+
