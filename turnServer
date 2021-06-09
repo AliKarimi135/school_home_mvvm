@@ -7,3 +7,44 @@ systemctl start coturn
  mv /etc/turnserver.conf /etc/turnserver.conf.backup
  vim /etc/turnserver.conf
 sudo service coturn restart
+
+
+apt install bind9 dnsutils
+cd /var/cache/bind
+
+vim db.example.com
+*********************************
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     ns1.example.com. root.example.com. (
+                              1          ; Serial
+                         604800          ; Refresh
+                          86400          ; Retry
+                        2419200          ; Expire
+                         604800 )        ; Negative Cache TTL
+ 
+@       IN      A       192.168.100.10
+ 
+@       IN      NS      ns1.example.com.
+ns1     IN      A       192.168.100.10
+ 
+@       IN      NS      ns2.example.com.
+ns2     IN      A       192.168.100.10
+ 
+@       IN      MX      10      mail
+mail    IN      A       192.168.100.10
+ 
+www     IN      A       192.168.100.10
+******************************
+named-checkzone example.com db.example.com
+
+ vim /etc/bind/named.conf.local
+ **************
+ zone "example.com" {
+        type master;
+        file "db.example.com";
+};
+********************
+systemctl restart bind9
